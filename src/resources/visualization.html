@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository Summary</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-color: #58a6ff;
+            --link-color: #58a6ff;
+            --lang-python: #3572A5;
+            --lang-js: #f1e05a;
+            --lang-html: #e34c26;
+            --lang-css: #563d7c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            background-color: transparent;
+        }
+
+        .repo-banner {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            max-width: 1000px;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .repo-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0; /* Prevents overflow in flex items */
+        }
+
+        .repo-header {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .repo-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .repo-icon {
+            fill: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .repo-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .repo-badge {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 2px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .repo-description {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .repo-preview-container {
+            width: 350px;
+            background-color: #010409;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .repo-banner.img-left .repo-preview-container {
+            order: -1;
+            border-left: none;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .repo-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .repo-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .languages {
+            display: flex;
+            gap: 16px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .language-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .lang-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-icon {
+            fill: var(--text-muted);
+        }
+
+    </style>
+</head>
+<body>
+
+    {% for repo in repositories %}
+    <div class="repo-banner {{ 'img-left' if loop.index0 % 2 == 1 else '' }}">
+        <div class="repo-content">
+            <div class="repo-header">
+                <div class="repo-title-row">
+                    <svg class="repo-icon" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7a.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path></svg>
+                    <span class="repo-title">{{ repo.name }}</span>
+                    <span class="repo-badge">{{ repo.visibility }}</span>
+                </div>
+                <p class="repo-description">
+                    {{ repo.description }}
+                </p>
+            </div>
+
+            <div class="repo-footer">
+                <ul class="languages">
+                    {% for lang in repo.normalized_languages[:6] %}
+                    <li class="language-item">
+                        <span class="lang-dot" style="background-color: {{ color_map.get(lang.name) or lang.color_var }}"></span>
+                        <span>{{ lang.name }} {{ "%.1f"|format(lang.size / repo.total_language_size * 100) if repo.total_language_size > 0 else 0 }}%</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="repo-preview-container">
+            <img src="{{ repo.preview }}" alt="{{ repo.name }} Preview" class="repo-preview">
+        </div>
+    </div>
+    {% endfor %}
+
+</body>
+</html>
